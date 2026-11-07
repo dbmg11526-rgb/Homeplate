@@ -1,0 +1,45 @@
+name: Deploy HomePlate to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Extract HomePlate package
+        run: |
+          mkdir -p dist
+          if [ -f homeplate-deployment-kit.zip ]; then
+            unzip -o homeplate-deployment-kit.zip -d dist
+          elif [ -f index.html ]; then
+            cp -a . dist/
+          else
+            echo "HomePlate package not found. Upload homeplate-deployment-kit.zip to the repository root."
+            exit 1
+          fi
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
