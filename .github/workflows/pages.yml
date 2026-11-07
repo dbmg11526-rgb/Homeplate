@@ -28,12 +28,15 @@ jobs:
           mkdir -p dist
           if [ -f homeplate-deployment-kit.zip ]; then
             unzip -o homeplate-deployment-kit.zip -d dist
+          elif [ -f homeplate-phone-app.zip ]; then
+            unzip -o homeplate-phone-app.zip -d dist
           elif [ -f index.html ]; then
             cp -a . dist/
           else
-            echo "HomePlate package not found. Upload homeplate-deployment-kit.zip to the repository root."
+            echo "HomePlate package not found."
             exit 1
           fi
+          test -f dist/index.html || find dist -name index.html -print
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
