@@ -39,6 +39,8 @@ jobs:
           test -f dist/index.html || find dist -name index.html -print
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
